@@ -85,33 +85,3 @@ def impute_immediate_mean(series, time):
     '''
     val_minus, val_plus = find_nearest(series, time)
     return round(np.mean([val_minus, val_plus]),1)
-
-# indices which have a value count of greater than one
-def max_duplicated_indices(df, inplace=False):
-    '''
-    Given a dataframe which has duplicated indices, the function returns the max value
-    for each column of the duplicated index.
-    
-    PARAMETERS
-    ----------
-    data: dataframe,
-        The data which includes duplicated index
-    inplace : bool, default False
-        Whether to drop duplicates in place or to return a copy.
-    
-    RETURNS
-    ----------
-    data: dataframe with 
-    '''
-    if inplace:
-        data = df
-    else:
-        data = df.copy()
-    greater_than_one = data.loc[data.index.value_counts()>1].index.unique()
-    for i in greater_than_one:
-        cols = data.loc[i, data.loc[i].nunique()>1].columns
-        for col in cols:
-            val = data.loc[i,col].unique().max()
-            data.loc[i,col] = val
-    data.drop_duplicates(inplace=True)
-    return data
