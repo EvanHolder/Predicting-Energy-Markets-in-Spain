@@ -85,3 +85,41 @@ def impute_immediate_mean(series, time):
     '''
     val_minus, val_plus = find_nearest(series, time)
     return round(np.mean([val_minus, val_plus]),1)
+
+def impute_mean_day(df, col):
+    '''
+    Find the days in the series that have Nans and impute the mean 
+    (by hour) of the day before and after that are not Nan
+
+    PARAMETERS
+    ----------
+    df: DataSeries,
+        The dataframe that contains the series for which to impute
+    col: str,
+        The column name for which to impute the immediate mean
+    '''
+    # Get the dates of missing values
+    dates = df.loc[df[col].isna()].index.normalize().unique()
+
+    for date in dates:
+        
+        # Check if all hours in the day are empty, if not go to next date
+        if df.loc[str(date.date()), col].isna().sum() < 24:
+            continue
+        
+        # Get the data point 24 hours before and after and average them
+        delta_minus = dt.timedelta(hours=24)
+        delta_plus  = dt.timedelta(hours=24)
+        cur_date = date
+        
+        # Check if the day before is nan, adjust if not
+        while np.isnan(df.loc[cur_date-delta_minus, col]):
+            delta_minus += dt.timedelta(hours=24)
+        while np.isnan(df.loc[cur_date+delta_plus, col]):
+            delta_plus  += dt.timedelta(hours=24)
+        
+        # Get the data points for the first full day before and after and average them
+        for i in range(1,25):
+            df.loc[cur_date,col] = np.mean([df.loc[cur_date-delta_minus, col],
+                                            df.loc[cur_date+delta_plus, col]])
+            cur_date += dt.timedelta(hours=1)
