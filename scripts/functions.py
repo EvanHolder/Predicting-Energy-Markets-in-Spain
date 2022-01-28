@@ -86,7 +86,7 @@ def impute_immediate_mean(series, time):
     val_minus, val_plus = find_nearest(series, time)
     return round(np.mean([val_minus, val_plus]),1)
 
-def impute_mean_day(df, col):
+def impute_mean_day(df, col, threshold):
     '''
     Find the days in the series that have Nans and impute the mean 
     (by hour) of the day before and after that are not Nan
@@ -97,14 +97,17 @@ def impute_mean_day(df, col):
         The dataframe that contains the series for which to impute
     col: str,
         The column name for which to impute the immediate mean
+    threshold: int
+        The number of values present in a single day.
+        Anything day with less than threshold Nan values not be imputed
     '''
     # Get the dates of missing values
     dates = df.loc[df[col].isna()].index.normalize().unique()
 
     for date in dates:
         
-        # Check if all hours in the day are empty, if not go to next date
-        if df.loc[str(date.date()), col].isna().sum() < 24:
+        # Check if threshold hours in the day are empty, if not go to next date
+        if df.loc[str(date.date()), col].isna().sum() < threshold:
             continue
         
         # Get the data point 24 hours before and after and average them
@@ -123,3 +126,81 @@ def impute_mean_day(df, col):
             df.loc[cur_date,col] = np.mean([df.loc[cur_date-delta_minus, col],
                                             df.loc[cur_date+delta_plus, col]])
             cur_date += dt.timedelta(hours=1)
+            
+def daylight_savings_shift(data, date_col):
+    '''
+    Shift dates columns to line up with Spain daylight savings period.
+    
+    PARAMETERS
+    ----------
+    df: dataframe,
+        The data for which to shift the date column
+    date_col: string,
+        The name of the date column
+    RETURNS
+    ----------
+    dt_: DataSeries,
+        The realigned dataseries shifted according to CET daylight savings time.
+    '''
+    df = data.copy()
+    # Define daylight savings each year
+    ds = {2015:[dt.datetime(2015,3,29), dt.datetime(2015,10,25)],
+          2016:[dt.datetime(2016,3,27), dt.datetime(2016,10,30)],
+          2017:[dt.datetime(2017,3,26), dt.datetime(2017,10,29)],
+          2018:[dt.datetime(2018,3,25), dt.datetime(2018,10,28)],
+          2019:[dt.datetime(2019,3,31), dt.datetime(2019,10,27)],
+          2020:[dt.datetime(2020,3,29), dt.datetime(2020,10,25)],
+          2021:[dt.datetime(2021,3,28), dt.datetime(2021,10,31)]}
+
+    # Reset the index
+    df.reset_index(inplace=True)
+
+    # Create datetime col based on the date col
+    df['dt_'] = pd.to_datetime(df[date_col])
+    
+    for i, date in enumerate(df.dt_):
+        if (date >= ds[date.year][0]) and (date <= ds[date.year][1]):
+            std_hour = df.loc[i, 'date'][11:]
+            if std_hour == '11:00 PM':
+                df.loc[i, 'dt_'] = df.loc[i, 'dt_']-dt.timedelta(hours=23)
+            else:
+                df.loc[i, 'dt_'] = df.loc[i, 'dt_']+dt.timedelta(hours=1)
+    return df.dt_
+
+def clean_weather(data):
+    '''
+    Given scraped weather data, clean up the indices and columns.
+    
+    PARAMETERS
+    ----------
+    data: dataframe,
+        The data for which to clean up, scraped
+    RETURNS
+    ----------
+    data: DataFrame,
+        The cleaned dataframe
+    
+    '''
+    df = data.copy()
+    # Drop any row that is not on the top of the hour
+    df['top_of_hour']= df['date'].apply(lambda x: x[-5:-3]=='00')
+    df = df.loc[df.top_of_hour].copy()
+    df.drop(columns='top_of_hour', inplace=True)
+    
+    # Reset index
+    df.reset_index(inplace=True)
+
+    # Shift date column to appropriate daylight savings time, and make datetime
+    df['date'] = daylight_savings_shift(df, 'date')
+    
+        # Reset index
+    df.set_index('date',inplace=True)
+
+    # Truncate temperature, dew_point, humidities, wind_speeds, pressures, precips data
+    df.temp = df.temp.apply(lambda x: int(x[:-3]))
+    df.dew_point = df.dew_point.apply(lambda x: int(x[:-3]))
+    df.humidities = df.humidities.apply(lambda x: int(x[:-3]))
+    df.wind_speeds = df.wind_speeds.apply(lambda x: int(x[:-5]))
+    df.pressures = df.pressures.apply(lambda x: float(x[:-4]))
+    df.precips = df.precips.apply(lambda x: float(x[:-4]))
+    return df

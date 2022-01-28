@@ -3,14 +3,9 @@ __pycache__
 
 scripts/pull_weather.py
 scripts/__pycache__
+scripts/pull_weatherR1.ipynb
 
-
-data/cross_border
-data/day ahead price
-data/gen_forecast
-data/generation
-data/load
-data/wind_solar_day_ahead
+data
 energy_clean.csv
 energy_dataset.csv
 gen_forecast.csv
@@ -21,3 +16,4 @@ prices.csv
 transmission_clean.csv
 weather_clean.csv
 wind_solar_2019-21.csv
+
