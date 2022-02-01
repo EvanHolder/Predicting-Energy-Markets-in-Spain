@@ -1,6 +1,8 @@
 import numpy as np
 import datetime as dt
 import pandas as pd
+from selenium import webdriver
+import time
 
 def equal(v1,v2):
     '''
