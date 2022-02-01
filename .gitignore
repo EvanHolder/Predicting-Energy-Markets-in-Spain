@@ -4,6 +4,7 @@ __pycache__
 scripts/pull_weather.py
 scripts/__pycache__
 scripts/pull_weatherR1.ipynb
+scripts/pull_weather.ipynb
 
 data
 energy_clean.csv
