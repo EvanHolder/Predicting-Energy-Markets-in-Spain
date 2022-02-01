@@ -204,3 +204,47 @@ def clean_weather(data):
     df.pressures = df.pressures.apply(lambda x: float(x[:-4]))
     df.precips = df.precips.apply(lambda x: float(x[:-4]))
     return df
+
+
+def render_page(url):
+    '''
+    Render page source with a three second delay given a url.
+    Libraries: webdriver from selenium, time
+    
+    PARAMETERS
+    ----------
+    url: str,
+        The url from which to render the page source
+    
+    RETURNS
+    ----------
+    r: html-page source
+    '''
+    
+    
+    driver = webdriver.Chrome('chromedriver')
+    driver.get(url)
+    time.sleep(3)
+    r = driver.page_source
+    driver.quit()
+    return r
+
+def extract_table(table):
+    '''
+    Extracts the summary weather table for a specific day from wundergroun.com
+    Libraries: webdriver from selenium, time, BeautifulSoup4, pandas
+    
+    PARAMETERS
+    ----------
+    table: BeautifulSoup4 container with header tbody
+        
+    RETURNS
+    ----------
+    day: list of nested lists,
+        Table data for each column in the wunderground webpage
+    '''
+    day = [[] for i in range(10)]
+    for row in table.find_all('tr', class_='ng-star-inserted'):
+        for i, col in enumerate(row.find_all('td', class_='ng-star-inserted')):
+            day[i].append(col.text)
+    return day
