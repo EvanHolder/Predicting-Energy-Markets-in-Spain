@@ -10,6 +10,8 @@ scripts/pull_generation.ipynb
 scripts/pull_weather_forecast.ipynb
 scripts/IGNORE
 
+notebooks/IGNORE
+
 data
 energy_clean.csv
 energy_dataset.csv
