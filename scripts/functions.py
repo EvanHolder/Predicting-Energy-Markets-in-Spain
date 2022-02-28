@@ -250,3 +250,33 @@ def extract_table(table):
         for i, col in enumerate(row.find_all('td', class_='ng-star-inserted')):
             day[i].append(col.text)
     return day
+
+def split_data(data, test_year):
+    '''
+    Splits the input dataframe into train and rest years. 
+    Libraries: pandas
+    
+    PARAMETERS
+    ----------
+    data: dataframe,
+        The data which to split into training and testing sets
+    test_year: int,
+        The year to use for testing set
+        
+    RETURNS
+    ----------
+    X_train: dataframe,
+        X training data
+    y_train: dataseries
+        y training data
+    X_test: dataframe,
+        X testing data
+    y_test: dataseries,
+        y testing data
+    '''
+    # Divide dataset into training and validation
+    X_train = data.loc[:str(test_year-1)]
+    y_train = data.loc[:str(test_year-1)]
+    X_test = data.loc[str(test_year)]
+    y_test = data.loc[str(test_year)]
+    return X_train, y_train, X_test, y_test
