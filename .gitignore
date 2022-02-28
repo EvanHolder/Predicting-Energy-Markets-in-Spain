@@ -8,6 +8,7 @@ scripts/pull_weather.ipynb
 scripts/pull_prices.ipynb
 scripts/pull_generation.ipynb
 scripts/pull_weather_forecast.ipynb
+scripts/IGNORE
 
 data
 energy_clean.csv
