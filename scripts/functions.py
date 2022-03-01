@@ -251,7 +251,7 @@ def extract_table(table):
             day[i].append(col.text)
     return day
 
-def split_data(data, test_year):
+def split_data(data, test_year, target):
     '''
     Splits the input dataframe into train and rest years. 
     Libraries: pandas
@@ -262,6 +262,8 @@ def split_data(data, test_year):
         The data which to split into training and testing sets
     test_year: int,
         The year to use for testing set
+    target: str, list,
+        The target variable or list of target variables
         
     RETURNS
     ----------
@@ -274,9 +276,26 @@ def split_data(data, test_year):
     y_test: dataseries,
         y testing data
     '''
+    # Get list of columns and name train_cols
+    train_cols = data.columns.to_list()
+    
+    # Remove target cols from train_cols list
+    if type(target) is list:
+        for col in target:
+            train_cols.remove(col)
+    else:
+        train_cols.remove(target)
+        
     # Divide dataset into training and validation
-    X_train = data.loc[:str(test_year-1)]
-    y_train = data.loc[:str(test_year-1)]
-    X_test = data.loc[str(test_year)]
-    y_test = data.loc[str(test_year)]
+    X_train = data.loc[:str(test_year-1), train_cols]
+    y_train = data.loc[:str(test_year-1), target]
+    X_test = data.loc[str(test_year), train_cols]
+    y_test = data.loc[str(test_year), target]
     return X_train, y_train, X_test, y_test
+
+import keras.backend as K
+def sMAPE(y_true, y_pred, d_type=None):
+    if d_type ='tensor':
+        return 100 * K.mean(abs(y_pred - y_true)/((abs(y_true)+abs(y_pred))/2))
+    else:
+        return 100/(len(y_true)) * (abs(y_pred - y_true)/((abs(y_true)+abs(y_pred))/2)).sum()
