@@ -295,7 +295,7 @@ def split_data(data, test_year, target):
 
 import keras.backend as K
 def sMAPE(y_true, y_pred, d_type=None):
-    if d_type ='tensor':
+    if d_type == 'tensor':
         return 100 * K.mean(abs(y_pred - y_true)/((abs(y_true)+abs(y_pred))/2))
     else:
         return 100/(len(y_true)) * (abs(y_pred - y_true)/((abs(y_true)+abs(y_pred))/2)).sum()
