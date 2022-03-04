@@ -3,6 +3,7 @@ import datetime as dt
 import pandas as pd
 from selenium import webdriver
 import time
+import keras.backend as K
 
 def equal(v1,v2):
     '''
@@ -293,9 +294,25 @@ def split_data(data, test_year, target):
     y_test = data.loc[str(test_year), target]
     return X_train, y_train, X_test, y_test
 
-import keras.backend as K
+
 def sMAPE(y_true, y_pred, d_type=None):
     if d_type == 'tensor':
         return 100 * K.mean(abs(y_pred - y_true)/((abs(y_true)+abs(y_pred))/2))
     else:
         return 100/(len(y_true)) * (abs(y_pred - y_true)/((abs(y_true)+abs(y_pred))/2)).sum()
+    
+def r2(y_true, y_pred):
+    return np.corrcoef(y_true, y_pred)[0][1]**2
+
+def compute_metrics(model, train, test):
+        
+    preds_train = model.predict(train[0])
+    preds_test = model.predict(test[0])
+    
+    sMAPE_train = sMAPE(train[1], preds_train)
+    sMAPE_val = sMAPE(test[1], preds_test)
+
+    r2_train = r2(train[1], preds_train)
+    r2_val = r2(test[1], preds_test)
+    
+    return [sMAPE_train, sMAPE_val, r2_train, r2_val]
