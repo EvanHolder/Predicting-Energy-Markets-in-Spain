@@ -345,3 +345,53 @@ def to_supervised(train, n_input, n_out=7, stride=1):
         # move along one time step
         in_start += stride
     return np.array(X), np.array(y)
+
+def window_gen(data, input_window, output_window, stride):
+    '''
+    Yields train and test samples of the given provided datasets, at specified input and out lengths, and specified strides
+    
+    PARAMETERS
+    ----------
+    train: tuple,
+        Tuple of length 2, which provides the training features and training targets respectively
+    test: tuple,
+        Tuple of length 2, which provides the testing features and testing targets respectively
+    input_window: int,
+        Length of the sequence of input data
+    output_window: int,
+        Length of the sequence of output data
+    stride, int
+        Number of steps to move between first sample and second sample
+    '''
+    # Define X_train, y_train, X_test, y_test
+    X, y = data[0], data[1]
+    
+    # Compute number of samples 
+    n = len(X)/stride
+    
+    # If the input_window is greater than a day, X_train
+    if input_window > 24:
+        n_add = input_window - 24
+        X = X.iloc[:n_add].append(X)
+    
+    i=0
+    for i in range(0, len(X)-n_add, stride):
+        yield X.iloc[i:i+input_window].to_numpy(), y.iloc[i:i+output_window].to_numpy()
+
+def resample(data, input_window, output_window, stride):
+    win = window_gen((data[0], data[1]), input_window=input_window, output_window=output_window, stride=stride)
+    
+    n = int(len(X_train)/stride)
+    X_data = np.array([])
+    y_data = np.array([])
+    
+    for i in range(n):
+        X_sample, y_sample = next(win)
+        X_data = np.append(X_data, X_sample)
+        y_data = np.append(y_data, y_sample)
+        
+    # Reshape
+    X_data = X_data.reshape(n,input_window,len(data[0].columns))
+    y_data = y_data.reshape(n, output_window)
+    
+    return X_data, y_data
