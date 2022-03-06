@@ -295,6 +295,9 @@ def split_data(data, test_year, target):
     return X_train, y_train, X_test, y_test
 
 
+def SMAPE(y_true, y_pred):
+    return 100 * K.mean(abs(y_pred - y_true)/((abs(y_true)+abs(y_pred))/2))
+
 def sMAPE(y_true, y_pred, d_type=None):
     if d_type == 'tensor':
         return 100 * K.mean(abs(y_pred - y_true)/((abs(y_true)+abs(y_pred))/2))
@@ -305,14 +308,40 @@ def r2(y_true, y_pred):
     return np.corrcoef(y_true, y_pred)[0][1]**2
 
 def compute_metrics(model, train, test):
-        
-    preds_train = model.predict(train[0])
-    preds_test = model.predict(test[0])
     
-    sMAPE_train = sMAPE(train[1], preds_train)
-    sMAPE_val = sMAPE(test[1], preds_test)
+    # Convert data into arrays if not already
+    X_train, y_train = np.array(train[0]), np.array(train[1])
+    X_test, y_test = np.array(test[0]), np.array(test[1])
+    
+    # Predict 
+    preds_train = model.predict(X_train)
+    preds_test = model.predict(X_test)
+    
+    # Compute sMAPE
+    sMAPE_train = sMAPE(y_train.flatten(), preds_train.flatten())
+    sMAPE_val = sMAPE(y_test.flatten(), preds_test.flatten())
 
-    r2_train = r2(train[1], preds_train)
-    r2_val = r2(test[1], preds_test)
+    # Compute r2
+    r2_train = r2(y_train.flatten(), preds_train.flatten())
+    r2_val = r2(y_test.flatten(), preds_test.flatten())
     
     return [sMAPE_train, sMAPE_val, r2_train, r2_val]
+
+
+def to_supervised(train, n_input, n_out=7, stride=1):
+    # flatten data
+    data = train.reshape((train.shape[0]*train.shape[1], train.shape[2]))
+    X, y = list(), list()
+    in_start = 0
+    # step over the entire history one time step at a time
+    for _ in range(len(data)):
+        # define the end of the input sequence
+        in_end = in_start + n_input
+        out_end = in_end + n_out
+        # ensure we have enough data for this instance
+        if out_end <= len(data):
+            X.append(data[in_start:in_end, :-1])
+            y.append(data[in_end:out_end, -1])
+        # move along one time step
+        in_start += stride
+    return np.array(X), np.array(y)
