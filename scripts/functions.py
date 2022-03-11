@@ -4,6 +4,7 @@ import pandas as pd
 from selenium import webdriver
 import time
 import keras.backend as K
+import tensorflow as tf
 
 def equal(v1,v2):
     '''
@@ -395,3 +396,44 @@ def resample(data, input_window, output_window, stride):
     y_data = y_data.reshape(n, output_window)
     
     return X_data, y_data
+
+def compile_fit(nn, train, validation,
+                patience=10,
+                metric=SMAPE,
+                #metric = tf.keras.metrics.MeanAbsolutePercentageError(name='MAPE'),
+                loss = tf.keras.metrics.mean_absolute_error,
+                batch_size = None, 
+                verbose='auto', 
+                learning_rate=.001):
+    
+    # Create early stopping point
+    metric.name='SMAPE'
+    callback = keras.callbacks.EarlyStopping(
+        patience=patience,
+        monitor='val_'+metric.name,
+        mode='min',
+        restore_best_weights=True
+    )
+    # Compile the model
+    nn.compile(
+        loss=loss, 
+        optimizer=keras.optimizers.Adam(learning_rate=learning_rate),
+        metrics=metric
+    )
+    if type(train[0]) is list:
+        train_x = [X_data for X_data in train[0]]
+        val_x = [X_data for X_data in validation[0]]
+    else:
+        train_x = [train[0]]
+        val_x = [validation[0]]
+    # Fit the model
+    history = nn.fit(
+        x = train_x,
+        y = train[1],
+        batch_size=batch_size,
+        epochs = 200,
+        callbacks=[callback],
+        validation_data=(val_x, validation[1]),
+        verbose=verbose
+    )
+    return nn
