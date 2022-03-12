@@ -308,7 +308,7 @@ def sMAPE(y_true, y_pred, d_type=None):
 def r2(y_true, y_pred):
     return np.corrcoef(y_true, y_pred)[0][1]**2
 
-def compute_metrics(model, train, test):
+def compute_metrics(model, param_dict, train, test):
     
     # Convert data into arrays if not already
     X_train, y_train = np.array(train[0]), np.array(train[1])
@@ -326,7 +326,7 @@ def compute_metrics(model, train, test):
     r2_train = r2(y_train.flatten(), preds_train.flatten())
     r2_val = r2(y_test.flatten(), preds_test.flatten())
     
-    return [sMAPE_train, sMAPE_val, r2_train, r2_val]
+    return [param_dict, sMAPE_train, sMAPE_val, r2_train, r2_val]
 
 
 def to_supervised(train, n_input, n_out=7, stride=1):
