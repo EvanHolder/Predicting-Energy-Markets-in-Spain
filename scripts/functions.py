@@ -437,3 +437,51 @@ def compile_fit(nn, train, validation,
         verbose=verbose
     )
     return nn
+
+def set_param(model, param, value):
+    if param == 'max_depth':
+        model.set_params(max_depth=value)
+    if param == 'gamma':
+        model.set_params(gamma=value)
+    if param == 'min_child_weight':
+        model.set_params(min_child_weight=value)
+    if param == 'subsample':
+        model.set_params(subsample=value)
+    if param == 'colsample_bytree':
+        model.set_params(colsample_bytree=value)
+    if param == 'reg_alpha':
+        model.set_params(reg_alpha=value)
+    if param == 'reg_lambda':
+        model.set_params(reg_lambda=value)
+    model.set_params(random_state=17)
+    return model
+
+
+def plot_metric_range(model, train, test, param, range_):
+    #Create lists to hold metrics for plotting
+    sMAPE_train, sMAPE_val, r2_train, r2_val = [],[],[],[]
+    
+    # For each element in metric range, fit model, compute metrics, and add to respective lists
+    for i in range_:
+        x = model
+        
+        x = set_param(x, param, i)
+        
+        x.fit(X_train, y_train)
+        metrics = compute_metrics(x, 'None',(train[0], train[1]), (test[0], test[1]))
+        sMAPE_train.append(metrics[1])
+        sMAPE_val.append(metrics[2])
+        r2_train.append(metrics[3])
+        r2_val.append(metrics[4])
+    
+    # Plot the metrics, one plot for train, one for test
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(15,5))
+    ax[0].plot(range_, sMAPE_train, label='sMAPE_train')
+    ax[0].plot(range_, sMAPE_val, label='sMAPE_val');
+    ax[0].set(xlabel=f'{param}', ylabel='sMAPE score', title=f'{param} versus sMAPE');
+    ax[0].legend();
+    ax[1].plot(range_, r2_train, label='r2_train');
+    ax[1].plot(range_, r2_val, label='r2_val');
+    ax[1].legend();
+    ax[1].set(xlabel=f'{param}', ylabel='r2 score', title=f'{param} versus r2');
+    
