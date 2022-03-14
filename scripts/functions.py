@@ -146,6 +146,7 @@ def daylight_savings_shift(data, date_col):
         The data for which to shift the date column
     date_col: string,
         The name of the date column
+    
     RETURNS
     ----------
     dt_: DataSeries,
@@ -229,8 +230,6 @@ def render_page(url):
     ----------
     r: html-page source
     '''
-    
-    
     driver = webdriver.Chrome('chromedriver')
     driver.get(url)
     time.sleep(3)
@@ -302,6 +301,23 @@ def split_data(data, test_year, target):
 
 
 def SMAPE(y_true, y_pred):
+    '''
+    Calculates the symmetric absolute mean.
+    
+    Libraries: keras.backend
+    
+    PARAMETERS
+    ----------
+    y_true: list-like,
+        The true values in a series, numpy array, or list-like
+    y_pred: list-like,
+        The predictions in a series, numpy array, or listi-like
+        
+    RETURNS
+    ----------
+    SMAPE: float,
+        The symmetric mean absolute percentage error
+    '''
     return 100 * K.mean(abs(y_pred - y_true)/((abs(y_true)+abs(y_pred))/2))
 
 def sMAPE(y_true, y_pred, d_type=None):
@@ -311,10 +327,47 @@ def sMAPE(y_true, y_pred, d_type=None):
         return 100/(len(y_true)) * (abs(y_pred - y_true)/((abs(y_true)+abs(y_pred))/2)).sum()
     
 def r2(y_true, y_pred):
+    '''
+    Calculates r-squared (coefficient of determination squared).
+    
+    Libraries: numpy
+    
+    PARAMETERS
+    ----------
+    y_true: list-like,
+        The true values in a series, numpy array, or list-like
+    y_pred: list-like,
+        The predictions in a series, numpy array, or listi-like
+        
+    RETURNS
+    ----------
+    SMAPE: float,
+        The r-squared value
+    '''
     return np.corrcoef(y_true, y_pred)[0][1]**2
 
 def compute_metrics(model, param_dict, train, test):
+    '''
+    Compute SMAPE and r-squared for a given training and/or testing dataset.
     
+    Libraries: numpy
+    
+    PARAMETERS
+    ----------
+    model: estimator,
+        The estimator used to predict y_pred
+    param_dict: dictionary or string,
+        The specific parameters used in fitting the estimator
+    train: tuple,
+        The dataset used to train the estimator in (predictors, targets) format
+    test: tuple,
+        The dataset used to test the estimator in (predictors, targets) format
+        
+    RETURNS
+    ----------
+    SMAPE: list,
+        List containing the parameters used to fit the estimator, and estimators computed metrics, format: [params, SMAPE_train, SMAPE_test, r2_train, r2_test]
+    '''
     # Convert data into arrays if not already
     X_train, y_train = np.array(train[0]), np.array(train[1])
     X_test, y_test = np.array(test[0]), np.array(test[1])
@@ -360,6 +413,8 @@ def window_gen(data, input_window, output_window, stride):
     '''
     Yields train and test samples of the given provided datasets, at specified input and out lengths, and specified strides
     
+    Libraries: pandas
+    
     PARAMETERS
     ----------
     train: tuple,
@@ -372,6 +427,10 @@ def window_gen(data, input_window, output_window, stride):
         Length of the sequence of output data
     stride, int
         Number of steps to move between first sample and second sample
+    YIELDS
+    ----------
+    windows: array or dataframe,
+        Samples of specified input_window, output wind
     '''
     # Define X_train, y_train, X_test, y_test
     X, y = data[0], data[1]
@@ -391,6 +450,26 @@ def window_gen(data, input_window, output_window, stride):
         yield X.iloc[i:i+input_window].to_numpy(), y.iloc[i:i+output_window].to_numpy()
 
 def resample(data, input_window, output_window, stride):
+    '''
+    Generates a new dataset in batches of samples of given input_window, output_window and stride
+    
+    Libraries: numpy, pandas
+    
+    PARAMETERS
+    ----------
+    data: tuple,
+        Tuple of length 2 (predictors, targets), which provides the input data to be batched into specified input / output windows
+    input_window: int,
+        The length of the input_sequence for each batch of predictors
+    output_window: int,
+        Length of the out_put sequence for each batch of targets
+    stride, int
+        Number of steps to move between first sample and second sample
+    RETURNS
+    ----------
+    x_data, y_data: array, array,
+        Batched predictors and associated targets of specified input/output windows 
+    '''
     win = window_gen((data[0], data[1]), input_window=input_window, output_window=output_window, stride=stride)
     
     n = int(len(data[0])/stride)
@@ -408,15 +487,43 @@ def resample(data, input_window, output_window, stride):
     
     return X_data, y_data
 
-def compile_fit(nn, train, validation,
+def compile_fit(nn,
+                train,
+                validation,
                 patience=10,
                 metric=SMAPE,
-                #metric = tf.keras.metrics.MeanAbsolutePercentageError(name='MAPE'),
                 loss = tf.keras.metrics.mean_absolute_error,
                 batch_size = None, 
                 verbose='auto', 
                 learning_rate=.001):
+    '''
+    Compiles and fits a neural network.
     
+    Libraries: keras, tensorflow
+    
+    PARAMETERS
+    ----------
+    nn: estimator,
+        Keras model
+    train: tuple, (predictors, targets),
+        The predictors and targets the estimator will be fit to
+    validation: tuple, (predictors, targets),
+        The predictors and targets the keras will use to evaluate the EarlyStopping method
+    metric, keras metric class
+        Metric for estimator to be compiled with
+    loss: keras loss,
+        Loss function to be used to fit the estimator
+    batch_size: int,
+        Size of the input samples
+    verbose: boolean,
+        Output progress, yes or no
+    learning_rate, float
+        The learning rate specified in Adam optimizer
+    RETURNS
+    ----------
+    nn: keras model,
+        Compiled and fit neural network
+    '''
     # Create early stopping point
     metric.name='SMAPE'
     callback = keras.callbacks.EarlyStopping(
@@ -450,6 +557,25 @@ def compile_fit(nn, train, validation,
     return nn
 
 def set_param(model, param, value):
+    '''
+    Sets the parameters for a specified model
+    
+    Libraries: keras
+    
+    PARAMETERS
+    ----------
+    model: estimator,
+        Keras model
+    param: str,
+        The name of the parameter to set
+    value: float, int, str,
+        The value of the specified parameter to be set
+    RETURNS
+    ----------
+    nn: keras model,
+        keras estimator with the specified parameter set
+    '''
+    
     if param == 'max_depth':
         model.set_params(max_depth=value)
     if param == 'gamma':
@@ -469,15 +595,32 @@ def set_param(model, param, value):
 
 
 def plot_metric_range(model, train, test, param, range_):
+    '''
+    Fits an estimator, computes metrics, and plots the results over a metric range.
+    
+    Libraries: sklearn, XGBoost, numpy, pandas
+    
+    PARAMETERS
+    ----------
+    model: estimator,
+        Estimator with fit and predict methods
+    train: tuple (predictors, targets),
+        Tuple containing the predictors and targets used to be fit the estimator and compute metrics
+    test: tuple (predictors, targets),
+        Tuple containing the predictors and targets of the test set used to compute metrics
+    param: str,
+        The name of the parameter to be set
+    range_: list,
+        The range of values that the specified parameter will be set to before training each estimator
+    '''
+    
     #Create lists to hold metrics for plotting
     sMAPE_train, sMAPE_val, r2_train, r2_val = [],[],[],[]
     
     # For each element in metric range, fit model, compute metrics, and add to respective lists
     for i in range_:
         x = model
-        
         x = set_param(x, param, i)
-        
         x.fit(train[0], train[1])
         metrics = compute_metrics(x, 'None',(train[0], train[1]), (test[0], test[1]))
         sMAPE_train.append(metrics[1])
