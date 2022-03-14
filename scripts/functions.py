@@ -641,6 +641,8 @@ def plot_metric_range(model, train, test, param, range_):
     
 def ensemble_nn(models):
     '''
+    Build ensemble neural network architecture.  Each input model's layers will be labeled untrainable.  There is a single hidden Dense layer with 24 nodes and an TimeDistributed Dense layer.
+    
     PARAMETERS
     ----------
     models: list,
@@ -648,7 +650,7 @@ def ensemble_nn(models):
     RETURNS
     ----------
     ensemble: keras model,
-        Trained model combining all input models into a single output model.
+        Model combining all input models into a single output model, with TimeDistributed dense output layer
     '''
     # Get models in list
     models = [model for model in models]
