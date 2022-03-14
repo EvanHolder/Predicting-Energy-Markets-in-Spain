@@ -7,6 +7,9 @@ import keras.backend as K
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from tensorflow import keras
+from keras import layers, models
+from tensorflow.keras.layers import TimeDistributed
+from tensorflow import keras
 
 def equal(v1,v2):
     '''
@@ -492,4 +495,35 @@ def plot_metric_range(model, train, test, param, range_):
     ax[1].plot(range_, r2_val, label='r2_val');
     ax[1].legend();
     ax[1].set(xlabel=f'{param}', ylabel='r2 score', title=f'{param} versus r2');
+    
+def ensemble_nn(models):
+    '''
+    PARAMETERS
+    ----------
+    models: list,
+        List containing trained models to use in ensemble
+    RETURNS
+    ----------
+    ensemble: keras model,
+        Trained model combining all input models into a single output model.
+    '''
+    # Get models in list
+    models = [model for model in models]
+
+    # Rename layers 
+    for i, model in enumerate(models):
+        for i2, layer in enumerate(model.layers):
+            layer.trainable = False
+            layer._name = f'ensemble_{i}_{i2}_{layer.name}'
+    
+    # Define multi-headed input
+    ensemble_visible = [model.input for model in models]
+    
+    # Concatenate merge output from each model
+    ensemble_outputs = [model.output for model in models]
+    merge = layers.merge.concatenate(ensemble_outputs)
+    hidden = layers.Dense(24, activation='relu')(merge)
+    output = TimeDistributed(layers.Dense(1))(hidden)
+    ensemble = keras.Model(inputs=ensemble_visible, outputs=output)   
+    return ensemble
     
