@@ -5,6 +5,8 @@ from selenium import webdriver
 import time
 import keras.backend as K
 import tensorflow as tf
+import matplotlib.pyplot as plt
+from tensorflow import keras
 
 def equal(v1,v2):
     '''
@@ -326,7 +328,11 @@ def compute_metrics(model, param_dict, train, test):
     r2_train = r2(y_train.flatten(), preds_train.flatten())
     r2_val = r2(y_test.flatten(), preds_test.flatten())
     
-    return [param_dict, sMAPE_train, sMAPE_val, r2_train, r2_val]
+    return [param_dict, 
+            round(sMAPE_train,3), 
+            round(sMAPE_val,3), 
+            round(r2_train,3), 
+            round(r2_val,3)]
 
 
 def to_supervised(train, n_input, n_out=7, stride=1):
@@ -374,6 +380,8 @@ def window_gen(data, input_window, output_window, stride):
     if input_window > 24:
         n_add = input_window - 24
         X = X.iloc[:n_add].append(X)
+    else:
+        n_add = 0
     
     i=0
     for i in range(0, len(X)-n_add, stride):
@@ -382,7 +390,7 @@ def window_gen(data, input_window, output_window, stride):
 def resample(data, input_window, output_window, stride):
     win = window_gen((data[0], data[1]), input_window=input_window, output_window=output_window, stride=stride)
     
-    n = int(len(X_train)/stride)
+    n = int(len(data[0])/stride)
     X_data = np.array([])
     y_data = np.array([])
     
@@ -467,7 +475,7 @@ def plot_metric_range(model, train, test, param, range_):
         
         x = set_param(x, param, i)
         
-        x.fit(X_train, y_train)
+        x.fit(train[0], train[1])
         metrics = compute_metrics(x, 'None',(train[0], train[1]), (test[0], test[1]))
         sMAPE_train.append(metrics[1])
         sMAPE_val.append(metrics[2])
