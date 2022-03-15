@@ -670,7 +670,7 @@ def ensemble_nn(models):
     # Define multi-headed input
     ensemble_visible = [model.input for model in models]
     
-    # Concatenate merge output from each model
+    # Concatenate, merge output from each model
     ensemble_outputs = [model.output for model in models]
     merge = layers.merge.concatenate(ensemble_outputs)
     hidden = layers.Dense(24, activation='relu')(merge)
