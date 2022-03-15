@@ -368,16 +368,10 @@ def compute_metrics(model, param_dict, train, test):
     SMAPE: list,
         List containing the parameters used to fit the estimator, and estimators computed metrics, format: [params, SMAPE_train, SMAPE_test, r2_train, r2_test]
     '''
-        
-    #if type(train[0]) is list:
-    #    train_x = [X_data for X_data in train[0]]
-    #    val_x = [X_data for X_data in validation[0]]
-    #else:
-    #    train_x = [train[0]]
-    #    val_x = [validation[0]]
     
     if type(train[0]) is list:
-        X_train, X_test = np.array(train[0]), np.array(test[0])
+        X_train = [np.array(train[0][0]), np.array(train[0][1])]
+        X_test = [np.array(test[0][0]), np.array(test[0][1])]
         y_train, y_test = np.array(train[1]), np.array(test[1])
     else:
         # Convert data into arrays if not already
