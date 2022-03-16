@@ -1,4 +1,4 @@
-<img src="../images/Spain_nightlight.jpg" />
+![Header](../images/Spain_nightlight.jpg)
 # Predicting Energy Markets in Spain
 **Author**: Evan Holder<br>
 **Flatiron Data Science**: Capstone Project<br>
