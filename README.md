@@ -1,4 +1,8 @@
-![Header](../images/Spain_nightlight.jpg)
+<table><tr>
+<td><img src="https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/tree/main/images/42450c5e679578b596be84e3df088ab1aac8b8ab.jpg" style="width:320px;height:300px"/></td>
+<td><img src= "https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/tree/main/images/spain_grid.gif" style="width:320px;height:300px"/></td>
+<td><img src= "https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/tree/main/images/wind_turbine.jpg" style="width:320px;height:300px"/></td> 
+</tr></table>
 # Predicting Energy Markets in Spain
 **Author**: Evan Holder<br>
 **Flatiron Data Science**: Capstone Project<br>
