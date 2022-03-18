@@ -1,7 +1,7 @@
 <table><tr>
-<td><img src="https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/solar_panels.jpg" style="width:320px;height:300px"/></td>
-<td><img src= "https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/spain_grid.gif" style="width:320px;height:300px"/></td>
-<td><img src= "https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/wind_turbine.jpg" style="width:320px;height:300px"/></td> 
+<td><img src="https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/solar_panels.jpg" style="width:320px;height:250px"/></td>
+<td><img src= "https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/spain_grid.gif" style="width:320px;height:250px"/></td>
+<td><img src= "https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/wind_turbine.jpg" style="width:320px;height:250px"/></td> 
 </tr></table>
 
 # Predicting Energy Markets in Spain
@@ -40,13 +40,13 @@ As the data did not appear to contain information on the final price, I moved on
 ### Final Model Evaluation
 Since all the models fit have performed extremely well, I'll selected the most interpretable model: Lasso.  In particular, the Lasso model with only five features is extremely simple, cut SMAPE by about a third, and increased r-squared.  Below, is a plot of the final model's coefficients.
 
-![Final Lasso Model](../data/lasso_feature_importance.png)
+![Final Lasso Model](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/lasso_feature_importance.png)
 
 In general, it is no surprise that `price_day_ahead` dominates the model.  The other features nudge that final price up or down.  `Renewable_lag`, `waste_lag`, `oil_lag` are all generation source. The model says that as renewable generation (feature represents other renewable outside major solar and wind) and waste generation decrease, the final price increases.  As generation from oil increases, the price also increases.  Finally  as the humidity in Bilbao decreases the price tends to decrease.
 
 For comparison, below is the final model predictions, the `price_day_ahead`, and the actual price over the course of the first week of 2021. You can see how lasso one appears as an adjusted form of the NEMO prediction, nudging the predicted price up at each time step. 
 
-![](../images/final_predictions.png)
+![](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/final_predictions.png)
 
 In addition, the below plot shows the model residuals and day-ahead price residual over the course of the first week of 2021.  As shown, the model's residuals tend to track closer to zero than do the NEMO's predictions.
 
