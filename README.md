@@ -14,7 +14,7 @@
 * README.MD
 * Images
 * Notebooks
-    * **capstone.ipynb** - full analysis here
+    * **[capstone.ipynb](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/notebooks/capstone.ipynb)** - full analysis here
     * LassoRegression.ipynb
     * NeuralNets.ipynb
     * RandomForest.ipynb
