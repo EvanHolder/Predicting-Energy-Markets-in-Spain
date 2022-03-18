@@ -14,11 +14,12 @@
 * README.MD
 * Images
 * Notebooks
+    * **capstone.ipynb** - full analysis here
     * LassoRegression.ipynb
     * NeuralNets.ipynb
     * RandomForest.ipynb
+    * Same-Day-Price.ipynb
     * XGBoost.ipynb
-    * capstone.ipynb
     * energy_visuals_exploration.ipynb
 * scripts
     * EDA_cleaning_components.ipynb
