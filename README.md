@@ -50,7 +50,7 @@ Finally, I attempted a few variations of neural network.  The intutition was tha
 ### Forecasting Price Components
 As the data did not appear to contain information on the final price, I moved on to investigate if the data could predict the other 14 price components.  In this investigation, I took two approaches: 1) model the price residual (day-ahead price minus actual price) and 2) model each individual component.  While the residual price modeling was mostly just noise, I was sucesseful in model the capacity payment, PBF tech, and secondary reserve components. Using a MultiOutputRegressor from sklearn, I was able to fit both Lasso and XGBoost models with these components as targets. The predictions from these models were summed and added to the day-ahead price to obtain final results comparable to modeling the actual price. Forecasting these three price components did decrease the SMAPE on both model types.
 
-### Final Model Evaluation
+# Final Model Evaluation
 Since all the models fit have performed extremely well, I'll selected the most interpretable model: Lasso.  In particular, the Lasso model with only five features is extremely simple, cut SMAPE by about a third, and increased r-squared.  Below, is a plot of the final model's coefficients.
 
 ![Final Lasso Model](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/lasso_feature_importance.png)
@@ -81,7 +81,3 @@ In combination with the appropriate data a GRU neural network ensemble, and conv
 See the full analysis in the [Jupyter Notebook](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain).
 
 For additional info, contact Evan Holder at holderevane@gmail.com
-
-# Repository Structure
-
-
