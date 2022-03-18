@@ -1,5 +1,5 @@
 <table><tr>
-<td><img src="https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/tree/main/images/42450c5e679578b596be84e3df088ab1aac8b8ab.jpg" style="width:320px;height:300px"/></td>
+<td><img src="https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/tree/main/images/solar_panels.jpg" style="width:320px;height:300px"/></td>
 <td><img src= "https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/tree/main/images/spain_grid.gif" style="width:320px;height:300px"/></td>
 <td><img src= "https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/tree/main/images/wind_turbine.jpg" style="width:320px;height:300px"/></td> 
 </tr></table>
@@ -9,6 +9,11 @@
 **Flatiron Data Science**: Capstone Project<br>
 [Github Link](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain)<br>
 [Presentation Link]()<br>
+
+# Repo Contents
+* README.MD
+
+
 # Background
 With the rise renewable energies, which are significantly impacted by the weather, it has become harder to balance energy supply and demand and keep the grid stable.  Grid instability often results in price uncertainty. By more accurately modeling the price of electricity, we can minimize the effects of a rapidly changing supply and demand balance. Or in other words, the better NEMOs can model the price of electricity, the better they can regulate energy production, limit wasted resources, and more efficiently deliver electricity to the consumer.
 
