@@ -6,9 +6,9 @@
 
 # Predicting Energy Markets in Spain
 **Author**: Evan Holder<br>
-**Flatiron Data Science**: Capstone Project<br>
-[Github Link](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain)<br>
-[Presentation Link]()<br>
+**Flatiron Data Science**:  Capstone Project<br>
+**Github**: [Link](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain)<br>
+**Presentation**: [Link](https://drive.google.com/file/d/1HyA071XXi58ihhPMNPIwUVrENHNLMtjs/view?usp=sharing)<br>
 
 # Repo Contents
 * README.MD
