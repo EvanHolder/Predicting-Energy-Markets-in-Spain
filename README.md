@@ -21,7 +21,7 @@
     * capstone.ipynb
     * energy_visuals_exploration.ipynb
 * scripts
-    * EDA_cleaning_components.py
+    * EDA_cleaning_components.ipynb
     * functions.py
     * weather_scraper.py
 
