@@ -16,21 +16,31 @@ The data for this project focuses on the electricity market in Spain. Generation
 * Training set: 2015-2019
 * Validation set: 2020
 * Testing set (holdout): 2021
-# Modeling Price
-**Lasso Regression**
+# Methods
+### Forecasting The Final Price
+The approach was to start with simpler, more interpretable models and proceed to some more complex neural networks.  I began modeling the price using a Lasso Regression as lasso is easily interpretable.  It also has the added bonus that it's able to handle multicolinearity as it has automatic feature selection built in.  Lasso models performed exceptionally well when the day-ahead price was included in the predictors, but was mostly noisy without it.
 
-**XGBoost**
+Next I modeled with XGBoost. With such a dominating feature as price-day ahead was in lasso regression, it was not surprising to find the same results using XGBoost.  Because XGBoost has the ability to learn non-linear relationships, I felt optimistic that it may be able to fit better on the data without the help of the day-ahead price.  However, results were similar to lasso, and even after expanding the tree depth the model did not fit without the day-ahead price
 
-**One-to-One Neural Network**
+Finally, I attempted a few variations of neural network.  The intutition was that a deep neural network may be able to uncover hidden relationships between the data and the price unseen by either lasso or XGBoost.  More notebably, I set up a few sequence to sequence (24 hour to 24 hour) input/output neural networks which again did not improve on the previous models without the use of the day-ahead price.  LSTM and ensemble DNN-LSTM networks were in hopes of capturing time-depentent sequences to sequence relationships but again model performance did not improve in any significant way without the day-ahead price.
 
-**24-to-24 Neural Network**
+### Forecasting Price Components
+As the data did not appear to contain information on the final price, I moved on to investigate if the data could predict the other 14 price components.  In this investigation, I took two approaches: 1) model the price residual (day-ahead price minus actual price) and 2) model each individual component.  While the residual price modeling was mostly just noise, I was sucesseful in model the capacity payment, PBF tech, and secondary reserve components. Using a MultiOutputRegressor from sklearn, I was able to fit both Lasso and XGBoost models with these components as targets. The predictions from these models were summed and added to the day-ahead price to obtain final results comparable to modeling the actual price. Forecasting these three price components did decrease the SMAPE on both model types.
 
-**LSTM Neural Network**
+### Final Model Evaluation
+Since all the models fit have performed extremely well, I'll selected the most interpretable model: Lasso.  In particular, the Lasso model with only five features is extremely simple, cut SMAPE by about a third, and increased r-squared.  Below, is a plot of the final model's coefficients.
 
-**DNN-LSTM Neural Network**
-# Modeling Price Residual
+![Final Lasso Model](../data/lasso_feature_importance.png)
 
-# Modeling Price Components
+In general, it is no surprise that `price_day_ahead` dominates the model.  The other features nudge that final price up or down.  `Renewable_lag`, `waste_lag`, `oil_lag` are all generation source. The model says that as renewable generation (feature represents other renewable outside major solar and wind) and waste generation decrease, the final price increases.  As generation from oil increases, the price also increases.  Finally  as the humidity in Bilbao decreases the price tends to decrease.
+
+For comparison, below is the final model predictions, the `price_day_ahead`, and the actual price over the course of the first week of 2021. You can see how lasso one appears as an adjusted form of the NEMO prediction, nudging the predicted price up at each time step. 
+
+![](../images/final_predictions.png)
+
+In addition, the below plot shows the model residuals and day-ahead price residual over the course of the first week of 2021.  As shown, the model's residuals tend to track closer to zero than do the NEMO's predictions.
+
+!()[../images/residuals_final.png]
 
 # Conclusion
 This project set out to see if the price was predictable from generation, transmission, weather, and price day-ahead data. In the end, the price day-ahead was a strong predictor of tomorrow's price, dominating the model. However, there are other features that nudge the price either up or down. On days when renewable generation, waste generation, and the humidity in Bilbao are up the final price tends to be cheaper.  On days when energy generation from oil is up, the final price tends to be more expensive.
