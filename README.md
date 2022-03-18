@@ -3,6 +3,7 @@
 <td><img src= "https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/tree/main/images/spain_grid.gif" style="width:320px;height:300px"/></td>
 <td><img src= "https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/tree/main/images/wind_turbine.jpg" style="width:320px;height:300px"/></td> 
 </tr></table>
+
 # Predicting Energy Markets in Spain
 **Author**: Evan Holder<br>
 **Flatiron Data Science**: Capstone Project<br>
