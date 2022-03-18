@@ -12,6 +12,19 @@
 
 # Repo Contents
 * README.MD
+* Images
+* Notebooks
+    * LassoRegression.ipynb
+    * NeuralNets.ipynb
+    * RandomForest.ipynb
+    * XGBoost.ipynb
+    * capstone.ipynb
+    * energy_visuals_exploration.ipynb
+* scripts
+    * EDA_cleaning_components.py
+    * functions.py
+    * weather_scraper.py
+
 
 
 # Background
@@ -50,7 +63,7 @@ For comparison, below is the final model predictions, the `price_day_ahead`, and
 
 In addition, the below plot shows the model residuals and day-ahead price residual over the course of the first week of 2021.  As shown, the model's residuals tend to track closer to zero than do the NEMO's predictions.
 
-!()[../images/residuals_final.png]
+!()[https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/residuals_final.png]
 
 # Conclusion
 This project set out to see if the price was predictable from generation, transmission, weather, and price day-ahead data. In the end, the price day-ahead was a strong predictor of tomorrow's price, dominating the model. However, there are other features that nudge the price either up or down. On days when renewable generation, waste generation, and the humidity in Bilbao are up the final price tends to be cheaper.  On days when energy generation from oil is up, the final price tends to be more expensive.
