@@ -58,11 +58,13 @@ Since all the models fit have performed extremely well, I'll selected the most i
 
 ![Final Lasso Model](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/lasso_feature_importance.png)
 
-In general, it is no surprise that `price_day_ahead` dominates the model.  The other features nudge that final price up or down.  `Renewable_lag`, `waste_lag`, `oil_lag` are all generation source. The model says that as renewable generation (feature represents other renewable outside major solar and wind) and waste generation decrease, the final price increases.  As generation from oil increases, the price also increases.  Finally  as the humidity in Bilbao decreases the price tends to decrease.
+In general, it is no surprise that `price_day_ahead` dominates the model.  The other features nudge that final price up or down.  `Renewable_lag`, `waste_lag`, `oil_lag` are all generation source. The model says that as renewable generation (feature represents other renewable outside major solar and wind) and waste generation decrease, the final price increases.  As generation from oil increases, the price also increases.  Finally  as the humidity in Bilbao decreases the price tends to decrease. Below are the final model metrics, as tested on the 2021 data.
+
+![](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/final_metrics.jpg)
 
 For comparison, below is the final model predictions, the `price_day_ahead`, and the actual price over the course of the first week of 2021. You can see how lasso one appears as an adjusted form of the NEMO prediction, nudging the predicted price up at each time step. 
 
-![](https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/final_predictions.png)
+<img src="https://github.com/EvanHolder/Predicting-Energy-Markets-in-Spain/blob/main/images/final_predictions.png" style="width:434px;height:100px"/>
 
 In addition, the below plot shows the model residuals and day-ahead price residual over the course of the first week of 2021.  As shown, the model's residuals tend to track closer to zero than do the NEMO's predictions.
 
